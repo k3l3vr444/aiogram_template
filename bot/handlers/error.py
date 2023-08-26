@@ -27,7 +27,9 @@ def split_nice(text: str, limit: int):
 
 @error_router.error()
 async def error_handler(event: ErrorEvent, config: Config, bot: Bot):
-    logger.critical("Critical error caused by %s", event.exception, exc_info=True)
+    logger.exception(event.exception)
+    if not config.logger.use_tg_handler:
+        return
     for chat_id in config.bot.error_handler_id:
         update = pprint.pformat(event.update.model_dump(exclude_none=True))[:4070]
         await bot.send_message(chat_id=chat_id,

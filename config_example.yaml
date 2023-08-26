@@ -13,3 +13,4 @@ db:
   echo: False
 logging:
   use_file_handler: False
+  use_tg_handler: False

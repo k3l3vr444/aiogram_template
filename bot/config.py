@@ -30,7 +30,8 @@ def load_db_config(dct: dict) -> DBConfig:
 
 def load_logging_config(dct: dict) -> LoggingConfig:
     return LoggingConfig(
-        use_file_handler=dct["use_file_handler"]
+        use_file_handler=dct["use_file_handler"],
+        use_tg_handler=dct["use_tg_handler"]
     )
 
 
