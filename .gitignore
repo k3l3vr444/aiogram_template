@@ -1,0 +1,13 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pycharm
+/.idea
+
+#Project
+/logs/
+/tests/
+/virtualenv/
+/config.yaml

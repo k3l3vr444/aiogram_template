@@ -1,0 +1,17 @@
+[Unit]
+TODO change description
+Description=Service description
+After=network.target
+
+[Service]
+TODO change user
+User=user
+Type=simple
+TODO change path
+WorkingDirectory=/home/user/ProjectName
+Environment="PATH=/home/user/ProjectName/virtualenv/bin"
+ExecStart=/home/user/ProjectName/virtualenv/bin/python /home/user/ProjectName/runner.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
