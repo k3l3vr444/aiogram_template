@@ -63,7 +63,6 @@ async def main():
     loop.create_task(scheduler_template(bot=bot, session_pool=pool))
 
     # start
-    logger.info("Started")
     try:
         await dp.start_polling(bot)
     finally:
