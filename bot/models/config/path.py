@@ -9,3 +9,7 @@ class Paths:
     @property
     def config(self) -> Path:
         return self.root_path / 'config.yaml'
+
+    @property
+    def logging(self) -> Path:
+        return self.root_path / 'logging.yaml'

@@ -2,8 +2,9 @@ import logging
 from typing import Callable, Any, Awaitable
 
 from aiogram import BaseMiddleware
+from aiogram.fsm.context import FSMContext
 from aiogram.types import TelegramObject, Message, CallbackQuery, ChatMemberUpdated, ChatMemberBanned, ChatMemberMember, \
-    ErrorEvent
+    ErrorEvent, Update
 
 logger = logging.getLogger(__name__)
 
@@ -16,18 +17,24 @@ class LoggingMiddleware(BaseMiddleware):
             event: TelegramObject,
             data: dict[str, Any]
     ) -> Any:
+        update: Update = data['event_update']
+        update_id = update.update_id
+        state: FSMContext = data['state']
+        current_state = await state.get_state()
         if type(event) == Message:
             event: Message
             try:
-                logger.info(f"Received message from User[ID:{event.from_user.id}] | {event.text} ")
+                logger.info(f"Received message from User[ID:{event.from_user.id}] | Update[ID: {update_id}] | "
+                            f"State: {current_state} | Text: '{event.text}'")
             except UnicodeEncodeError:
-                logger.info(f"Failed to log message from User[ID:{event.from_user.id}] | UnicodeEncodeError ")
+                logger.info(f"Failed to log message from User[ID:{event.from_user.id}] | Update[ID: {update_id}] |"
+                            f"State: {current_state} | UnicodeEncodeError ")
         elif type(event) == CallbackQuery:
             event: CallbackQuery
             if event.message:
                 logger.info(f"Received callback query "
-                            f"from User[ID:{event.from_user.id}] "
-                            f"with data: {event.data}")
+                            f"from User[ID:{event.from_user.id}]  | Update[ID: {update_id}] | State: {current_state} | "
+                            f"Data: {event.data}")
         elif type(event) == ChatMemberUpdated:
             event: ChatMemberUpdated
             if type(event.new_chat_member) == ChatMemberMember:
@@ -40,4 +47,4 @@ class LoggingMiddleware(BaseMiddleware):
             pass
         else:
             logger.warning(f"Received unknown event\n{event}")
-        await handler(event, data)
+        return await handler(event, data)

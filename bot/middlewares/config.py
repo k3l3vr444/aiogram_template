@@ -17,6 +17,4 @@ class ConfigMiddleware(BaseMiddleware):
             data: dict[str, Any],
     ) -> Any:
         data["config"] = self.config
-        result = await handler(event, data)
-        del data["config"]
-        return result
+        return await handler(event, data)

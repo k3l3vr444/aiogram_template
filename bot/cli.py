@@ -1,7 +1,5 @@
 import asyncio
-import datetime
 import logging
-import os
 from pathlib import Path
 
 from aiogram import Bot, Dispatcher
@@ -20,25 +18,16 @@ from bot.handlers.wildcard import wildcard_router
 from bot.middlewares import setup_middlewares
 from bot.models.db.db import create_pool
 from bot.scheduler import scheduler_template
+from bot.setup_logging import setup_logging
 
 logger = logging.getLogger(__name__)
 
 
 async def main():
     config = load_config(Path(__file__).parent.parent)
-    logging_handlers = [logging.StreamHandler()]
-    if config.logger.use_file_handler:
-        try:
-            os.mkdir("logs")
-        except FileExistsError:
-            pass
-        logging_handlers.append(logging.FileHandler(f"logs/{datetime.datetime.now().strftime('%Y_%m_%d-%H_%M')}.log"))
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s.%(msecs)03d | %(name)-30s | %(levelname)-8s | #%(lineno)-5d| %(message)s \n",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        handlers=logging_handlers
-    )
+
+    setup_logging(config)
+
     logger.warning("Starting bot")
 
     if config.bot.use_redis:
@@ -63,7 +52,7 @@ async def main():
     for router in [admin_command_router, user_command_router, admin_router, user_router, wildcard_router, error_router]:
         router.message.filter(PrivateChatTypeFilter())
         dp.include_router(router)
-    logger.debug("handlers configured successfully")
+    logger.debug("Handlers configured successfully")
 
     bot = Bot(
         token=config.bot.token,
@@ -74,7 +63,7 @@ async def main():
     loop.create_task(scheduler_template(bot=bot, session_pool=pool))
 
     # start
-    logger.info("started")
+    logger.info("Started")
     try:
         await dp.start_polling(bot)
     finally:

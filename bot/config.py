@@ -5,7 +5,6 @@ import yaml
 from bot.models.config.bot import BotConfig
 from bot.models.config.config import Config
 from bot.models.config.db import DBConfig
-from bot.models.config.log import LoggingConfig
 from bot.models.config.path import Paths
 
 
@@ -28,13 +27,6 @@ def load_db_config(dct: dict) -> DBConfig:
     )
 
 
-def load_logging_config(dct: dict) -> LoggingConfig:
-    return LoggingConfig(
-        use_file_handler=dct["use_file_handler"],
-        use_tg_handler=dct["use_tg_handler"]
-    )
-
-
 def load_config(root_path: Path) -> Config:
     paths = Paths(root_path)
     with paths.config.open("r", encoding="utf8") as f:
@@ -42,6 +34,5 @@ def load_config(root_path: Path) -> Config:
     return Config(
         bot=load_bot_config(config_dct['bot']),
         db=load_db_config(config_dct['db']),
-        logger=load_logging_config(config_dct['logging']),
         paths=paths
     )
