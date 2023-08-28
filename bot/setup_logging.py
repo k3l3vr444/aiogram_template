@@ -9,20 +9,22 @@ from bot.models.config.config import Config
 logger = logging.getLogger(__name__)
 
 
-def prepare_file_handler(logging_config: dict):
-    if 'file_handler' in logging_config['root']['handlers']:
+class FileRotateNameHandler(logging.FileHandler):
+    def __init__(self, mode='a', encoding=None, delay=False, errors=None):
         try:
-            os.mkdir("logs")
+            os.mkdir('logs')
         except FileExistsError:
             pass
-        logging_config['handlers']['file_handler']['filename'] = f"logs/{datetime.now().strftime('%Y_%m_%d-%H_%M')}.log"
+        super().__init__(f"logs/{datetime.now().strftime('%Y_%m_%d-%H_%M')}.log",
+                         mode=mode, encoding=encoding, delay=delay, errors=errors)
 
 
 def setup_logging(config: Config):
     try:
         with config.paths.logging.open("r") as f:
             logging_config = yaml.safe_load(f)
-        prepare_file_handler(logging_config)
+        if 'file_handler' not in logging_config['root']['handlers']:
+            del logging_config['handlers']['file_handler']
         logging.config.dictConfig(logging_config)
         logger.info("Logging configured successfully")
     except IOError:
