@@ -52,7 +52,7 @@ async def main():
     for router in [admin_command_router, user_command_router, admin_router, user_router, wildcard_router, error_router]:
         router.message.filter(PrivateChatTypeFilter())
         dp.include_router(router)
-    logger.debug("Handlers configured successfully")
+    logger.info("Handlers configured successfully")
 
     bot = Bot(
         token=config.bot.token,
