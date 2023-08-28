@@ -4,7 +4,7 @@ formatters:
     format: '%(asctime)s | %(name)-30s | %(levelname)-8s | #%(lineno)-5d| %(message)s'
   colored:
     (): colorlog.ColoredFormatter
-    format: '%(asctime)s | %(name)-30s | %(log_color)s%(levelname)-8s | #%(lineno)-5d| %(blue)s%(message)s'
+    format: '%(asctime)s | %(name)-30s %(log_color)s| %(levelname)-8s | #%(lineno)-5d| %(blue)s%(message)s'
 
 handlers:
   console:
