@@ -11,6 +11,3 @@ db:
   database: database
   host: 127.0.0.1
   echo: False
-logging:
-  use_file_handler: False
-  use_tg_handler: False

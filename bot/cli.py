@@ -43,7 +43,7 @@ async def main():
 
     setup_middlewares(dp, pool, config)
 
-    logging.warning(f"Admin list: {config.bot.admin_id}")
+    logger.warning(f"Admin list: {config.bot.admin_id}")
 
     admin_filter = AdminFilter(config.bot.admin_id)
     admin_router.message.filter(admin_filter)
