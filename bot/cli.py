@@ -67,7 +67,7 @@ async def main():
         await dp.start_polling(bot)
     finally:
         await engine.dispose()
-        logger.info("stopped")
+        logger.error("Bot stopped!")
 
 
 def cli():
@@ -75,4 +75,4 @@ def cli():
     try:
         asyncio.run(main())
     except (KeyboardInterrupt, SystemExit):
-        logger.error("Bot stopped!")
+        pass
