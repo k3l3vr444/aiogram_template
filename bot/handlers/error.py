@@ -1,4 +1,5 @@
 import asyncio
+import html
 import logging
 import pprint
 import traceback
@@ -35,7 +36,8 @@ async def error_handler(event: ErrorEvent, config: Config, bot: Bot):
         await bot.send_message(chat_id=chat_id,
                                text=f'By processing update <pre language="python">{update}</pre>'
                                )
-        for index, text in enumerate(split_nice(traceback.format_exc(), 4040)):
+        trace = html.escape(traceback.format_exc())
+        for index, text in enumerate(split_nice(trace, 4040)):
             await asyncio.sleep(0.3)
             if index == 0:
                 await bot.send_message(chat_id=chat_id,
