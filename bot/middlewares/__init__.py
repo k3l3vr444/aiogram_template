@@ -6,7 +6,7 @@ from .config import ConfigMiddleware
 from .load_data import LoadDataMiddleware
 from .logging import LoggingMiddleware
 from .db import DBMiddleware
-from .trottling import ThrottlingMiddleware
+from .throttling import ThrottlingMiddleware
 
 
 def setup_middlewares(dp: Dispatcher, pool: async_sessionmaker[AsyncSession], config_: Config):
