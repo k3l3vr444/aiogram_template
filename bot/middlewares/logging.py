@@ -24,27 +24,24 @@ class LoggingMiddleware(BaseMiddleware):
         if type(event) == Message:
             event: Message
             try:
-                logger.info(f"Received message from User[ID:{event.from_user.id}] | Update[ID: {update_id}] | "
-                            f"State: {current_state} | Text: '{event.text}'")
+                logger.info(f"Update id={update_id} | User id={event.from_user.id} | State={current_state} | "
+                            f"Received message: '{event.text}'")
             except UnicodeEncodeError:
-                logger.info(f"Failed to log message from User[ID:{event.from_user.id}] | Update[ID: {update_id}] |"
-                            f"State: {current_state} | UnicodeEncodeError ")
+                logger.info(f"Update id={update_id} | User id={event.from_user.id} | State={current_state} | "
+                            f"Failed to log message from  | UnicodeEncodeError ")
         elif type(event) == CallbackQuery:
             event: CallbackQuery
             if event.message:
-                logger.info(f"Received callback query "
-                            f"from User[ID:{event.from_user.id}]  | Update[ID: {update_id}] | State: {current_state} | "
-                            f"Data: {event.data}")
+                logger.info(f"Update id={update_id} | User id={event.from_user.id} | State={current_state} | "
+                            f"Received callback query: {event.data}")
         elif type(event) == ChatMemberUpdated:
             event: ChatMemberUpdated
             if type(event.new_chat_member) == ChatMemberMember:
-                logger.info(f"User[ID:{event.from_user.id}] joined bot")
+                logger.info(f"Update id={update_id} | User id={event.from_user.id} | Joined bot")
             elif type(event.new_chat_member) == ChatMemberBanned:
-                logger.info(f"User[ID:{event.from_user.id}] banned bot")
+                logger.info(f"Update id={update_id} | User id={event.from_user.id} | Banned bot")
             else:
                 logger.info(f"Received unknown ChatMemberUpdated :{event}")
-        elif type(event) == ErrorEvent:
-            pass
         else:
             logger.warning(f"Received unknown event\n{event}")
         return await handler(event, data)
