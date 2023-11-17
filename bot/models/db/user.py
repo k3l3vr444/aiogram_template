@@ -19,6 +19,7 @@ class User(Base):
                                                         server_default=func.now())
     last_seen: Mapped[datetime] = mapped_column(default=datetime.now,
                                                 server_default=func.now())
+    is_active: Mapped[bool] = mapped_column(server_default='t')
 
     __mapper_args__ = {"eager_defaults": True}
 
@@ -31,4 +32,5 @@ class User(Base):
                         username=self.username,
                         full_name=self.full_name,
                         registration_time=self.registration_time,
-                        last_seen=self.last_seen)
+                        last_seen=self.last_seen,
+                        is_active=self.is_active)

@@ -12,6 +12,7 @@ from bot.filters.superuser import AdminFilter
 from bot.handlers.admin import admin_router
 from bot.handlers.admin.commands import admin_command_router
 from bot.handlers.error import error_router
+from bot.handlers.my_chat_member import my_chat_member_router
 from bot.handlers.user import user_router
 from bot.handlers.user.commands import user_command_router
 from bot.handlers.wildcard import wildcard_router
@@ -49,7 +50,8 @@ async def main():
     admin_router.message.filter(admin_filter)
     admin_command_router.message.filter(admin_filter)
 
-    for router in [admin_command_router, user_command_router, admin_router, user_router, wildcard_router, error_router]:
+    for router in [admin_command_router, user_command_router, admin_router, user_router, my_chat_member_router,
+                   wildcard_router, error_router]:
         router.message.filter(PrivateChatTypeFilter())
         dp.include_router(router)
     logger.info("Handlers configured successfully")

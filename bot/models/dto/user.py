@@ -10,3 +10,4 @@ class User:
     full_name: str
     registration_time: datetime
     last_seen: datetime
+    is_active: bool

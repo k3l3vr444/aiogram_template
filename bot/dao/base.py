@@ -23,6 +23,10 @@ class BaseDAO(Generic[Model]):
         )
         return result.scalar_one()
 
+    async def update_by_id(self, id: int, **kwargs):
+        query = update(self.model).where(self.model.id == id).values(**kwargs)
+        await self.session.execute(query)
+
     def save(self, obj: Model):
         self.session.add(obj)
 

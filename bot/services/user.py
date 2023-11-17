@@ -14,6 +14,13 @@ async def select_user(user_dao: UserDAO,
     return user.to_dto()
 
 
+async def update_user(user_dao: UserDAO,
+                      user_id: int,
+                      **kwargs):
+    await user_dao.update_by_id(user_id, **kwargs)
+    await user_dao.commit()
+
+
 async def upsert_user(user_dao: UserDAO,
                       aiogram_user: AiogramUser) -> dto.User:
     user = await user_dao.upsert_user(aiogram_user=aiogram_user)
