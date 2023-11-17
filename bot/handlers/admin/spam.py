@@ -10,7 +10,7 @@ from bot.dao.holder import HolderDAO
 from bot.keyboards import inline
 from bot.models.config.config import Config
 from bot.models.state.admin import AdminSpam
-from bot.services.user import get_users
+from bot.services.user import paginate_users
 
 logger = logging.getLogger(__name__)
 router = Router()
@@ -26,10 +26,9 @@ async def spam_button(callback: CallbackQuery, state: FSMContext):
 @router.message(AdminSpam.message)
 async def input_message(message: Message, state: FSMContext, dao: HolderDAO, config: Config):
     await state.clear()
-    user_list = await get_users(user_dao=dao.user)
     logger.warning(f'Starting spamming users with message: {message.text}')
     tmp_time = datetime.now()
-    for user in user_list:
+    async for user in paginate_users(user_dao=dao.user):
         if user.id in config.bot.admin_id:
             logger.info(f'Spam skipped admin {user.id}')
             continue

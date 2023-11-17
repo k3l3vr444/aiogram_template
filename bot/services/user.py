@@ -1,4 +1,5 @@
 import logging
+from typing import AsyncIterator
 
 from aiogram.types import User as AiogramUser
 
@@ -28,6 +29,6 @@ async def upsert_user(user_dao: UserDAO,
     return user.to_dto()
 
 
-async def get_users(user_dao: UserDAO) -> list[dto.User]:
-    users = await user_dao.get_all()
-    return [user.to_dto() for user in users]
+async def paginate_users(user_dao: UserDAO) -> AsyncIterator[dto.User]:
+    async for user in user_dao.iter_all():
+        yield user.to_dto()

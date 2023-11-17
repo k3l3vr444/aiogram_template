@@ -1,7 +1,8 @@
-from sqlalchemy import delete, func
-from sqlalchemy.future import select
+from typing import TypeVar, Type, Generic, AsyncIterator
+
+from sqlalchemy import delete, func, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List, TypeVar, Type, Generic
+from sqlalchemy.future import select
 
 from bot.models.db import Base
 
@@ -13,9 +14,18 @@ class BaseDAO(Generic[Model]):
         self.model = model
         self.session = session
 
-    async def get_all(self) -> List[Model]:
-        result = await self.session.execute(select(self.model))
-        return result.scalars().all()
+    async def iter_all(self) -> AsyncIterator[Model]:
+        OFFSET = 0
+        LIMIT = 1000
+        while True:
+            query = select(self.model).offset(OFFSET).limit(LIMIT)
+            results = await self.session.execute(query)
+            results = results.scalars().all()
+            if not results:
+                return
+            for result in results:
+                yield result
+            OFFSET += len(results)
 
     async def get_by_id(self, id: int) -> Model:
         result = await self.session.execute(
