@@ -4,7 +4,7 @@ from typing import Callable, Any, Awaitable
 from aiogram import BaseMiddleware
 from aiogram.fsm.context import FSMContext
 from aiogram.types import TelegramObject, Message, CallbackQuery, ChatMemberUpdated, ChatMemberBanned, ChatMemberMember, \
-    ErrorEvent, Update
+    Update
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ class LoggingMiddleware(BaseMiddleware):
         update_id = update.update_id
         state: FSMContext = data['state']
         current_state = await state.get_state()
-        if type(event) == Message:
+        if isinstance(event, Message):
             event: Message
             try:
                 logger.info(f"Update id={update_id} | User id={event.from_user.id} | State={current_state} | "
@@ -29,16 +29,16 @@ class LoggingMiddleware(BaseMiddleware):
             except UnicodeEncodeError:
                 logger.info(f"Update id={update_id} | User id={event.from_user.id} | State={current_state} | "
                             f"Failed to log message from  | UnicodeEncodeError ")
-        elif type(event) == CallbackQuery:
+        elif isinstance(event, CallbackQuery):
             event: CallbackQuery
             if event.message:
                 logger.info(f"Update id={update_id} | User id={event.from_user.id} | State={current_state} | "
                             f"Received callback query: {event.data}")
-        elif type(event) == ChatMemberUpdated:
+        elif isinstance(event, ChatMemberUpdated):
             event: ChatMemberUpdated
-            if type(event.new_chat_member) == ChatMemberMember:
+            if isinstance(event.new_chat_member, ChatMemberMember):
                 logger.info(f"Update id={update_id} | User id={event.from_user.id} | Joined bot")
-            elif type(event.new_chat_member) == ChatMemberBanned:
+            elif isinstance(event.new_chat_member, ChatMemberBanned):
                 logger.info(f"Update id={update_id} | User id={event.from_user.id} | Banned bot")
             else:
                 logger.info(f"Received unknown ChatMemberUpdated :{event}")

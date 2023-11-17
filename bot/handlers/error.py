@@ -14,16 +14,40 @@ error_router = Router(name=__name__)
 logger = logging.getLogger(__name__)
 
 
-def split_nice(text: str, limit: int):
+def split_nice(text: str,
+               limit: int,
+               first_string_limit: int = 0):
     split_text = []
+    tmp_limit = 0
     while len(text) > limit:
+        if first_string_limit:
+            tmp_limit = limit
+            limit = first_string_limit
         tmp = text[:limit]
         tmp = tmp[:tmp.rfind('\n')]
         split_text.append(tmp)
         text = text[len(tmp):]
+        if first_string_limit:
+            limit = tmp_limit
+            first_string_limit = 0
     if len(text) > 0:
         split_text.append(text)
     return split_text
+
+
+async def paginate_message(bot: Bot, chat_id: int, text: str, pre_text: str):
+    for index, text in enumerate(split_nice(text,
+                                            limit=4067,
+                                            first_string_limit=4067 - len(pre_text))):
+        if index == 0:
+            await bot.send_message(chat_id=chat_id,
+                                   text=f'{pre_text}<pre language="python">{text}'
+                                        f'</pre>')
+        else:
+            await bot.send_message(chat_id=chat_id,
+                                   text=f'<pre language="python">{text}</pre>'
+                                   )
+        await asyncio.sleep(0.3)
 
 
 @error_router.error()
@@ -32,18 +56,12 @@ async def error_handler(event: ErrorEvent, config: Config, bot: Bot):
     if not config.bot.error_handler_id:
         return
     for chat_id in config.bot.error_handler_id:
-        update = pprint.pformat(event.update.model_dump(exclude_none=True))[:4070]
-        await bot.send_message(chat_id=chat_id,
-                               text=f'By processing update <pre language="python">{update}</pre>'
-                               )
-        trace = html.escape(traceback.format_exc())
-        for index, text in enumerate(split_nice(trace, 4040)):
-            await asyncio.sleep(0.3)
-            if index == 0:
-                await bot.send_message(chat_id=chat_id,
-                                       text=f'Received exception:\n\n<pre language="python">{text}</pre>'
-                                       )
-            else:
-                await bot.send_message(chat_id=chat_id,
-                                       text=f'<pre language="python">{text}</pre>'
-                                       )
+        if event:
+            await paginate_message(bot=bot,
+                                   chat_id=chat_id,
+                                   text=pprint.pformat(event.update.model_dump(exclude_none=True)),
+                                   pre_text='By processing update ')
+        await paginate_message(bot=bot,
+                               chat_id=chat_id,
+                               text=html.escape(traceback.format_exc()),
+                               pre_text='Received exception:\n\n')
