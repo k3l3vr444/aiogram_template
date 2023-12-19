@@ -11,3 +11,4 @@ __pycache__/
 /tests/
 /virtualenv/
 /config.yaml
+/logging.yaml
