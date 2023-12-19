@@ -5,6 +5,7 @@ from aiogram.types import TelegramObject
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
 from bot.dao.holder import HolderDAO
+from bot.services.holder import ServiceHolder
 
 
 class DBMiddleware(BaseMiddleware):
@@ -12,13 +13,14 @@ class DBMiddleware(BaseMiddleware):
         self.pool = pool
 
     async def __call__(
-            self,
-            handler: Callable[[TelegramObject, dict[str, Any]], Awaitable[Any]],
-            event: TelegramObject,
-            data: dict[str, Any]
+        self,
+        handler: Callable[[TelegramObject, dict[str, Any]], Awaitable[Any]],
+        event: TelegramObject,
+        data: dict[str, Any],
     ) -> Any:
         async with self.pool() as session:
-            data["dao"] = HolderDAO(session)
+            dao = HolderDAO(session)
+            data["service"] = ServiceHolder(dao)
             result = await handler(event, data)
-            del data["dao"]
+            del data["service"]
             return result

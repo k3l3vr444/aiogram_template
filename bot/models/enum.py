@@ -2,5 +2,5 @@ from enum import Enum
 
 
 class MediaType(Enum):
-    PHOTO = 'Photo'
-    VIDEO = 'Video'
+    PHOTO = "Photo"
+    VIDEO = "Video"

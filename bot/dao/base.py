@@ -6,7 +6,7 @@ from sqlalchemy.future import select
 
 from bot.models.db import Base
 
-Model = TypeVar('Model', Base, Base)
+Model = TypeVar("Model", Base, Base)
 
 
 class BaseDAO(Generic[Model]):
@@ -41,14 +41,10 @@ class BaseDAO(Generic[Model]):
         self.session.add(obj)
 
     async def delete_all(self):
-        await self.session.execute(
-            delete(self.model)
-        )
+        await self.session.execute(delete(self.model))
 
     async def count(self):
-        result = await self.session.execute(
-            select(func.count(self.model.id))
-        )
+        result = await self.session.execute(select(func.count(self.model.id)))
         return result.scalar_one()
 
     async def commit(self):

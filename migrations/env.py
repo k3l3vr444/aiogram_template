@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 from alembic import context
 
-from bot.config import load_config
+from bot.models.config import Config
 from bot.models.db import Base
 
 # this is the Alembic Config object, which provides
@@ -18,7 +18,9 @@ config = context.config
 
 # this will overwrite the ini-file sqlalchemy.url path
 # with the path given in the config of the main code
-config.set_main_option('sqlalchemy.url', load_config(Path(__file__).parent.parent).db.uri)
+config.set_main_option(
+    "sqlalchemy.url", Config.load(Path(__file__).parent.parent).db.uri
+)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

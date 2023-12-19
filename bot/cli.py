@@ -1,12 +1,10 @@
 import asyncio
 import logging
-from pathlib import Path
 
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage
 
-from bot.config import load_config
 from bot.filters.chat_type import PrivateChatTypeFilter
 from bot.filters.superuser import AdminFilter
 from bot.handlers.admin import admin_router
@@ -20,19 +18,18 @@ from bot.middlewares import setup_middlewares
 from bot.models.db.db import create_pool
 from bot.scheduler import scheduler_template
 from bot.setup_logging import setup_logging
+from .config_loader import config
 
 logger = logging.getLogger(__name__)
 
 
 async def main():
-    config = load_config(Path(__file__).parent.parent)
-
     setup_logging(config)
 
     logger.warning("Starting bot")
 
     if config.bot.use_redis:
-        storage = RedisStorage.from_url('redis://@localhost:6379')
+        storage = RedisStorage.from_url("redis://@localhost:6379")
         logger.info("Using redis storage")
     else:
         storage = MemoryStorage()
@@ -44,14 +41,21 @@ async def main():
 
     setup_middlewares(dp, pool, config)
 
-    logger.warning(f"Admin list: {config.bot.admin_id}")
+    logger.warning(f"Admin list: {config.bot.admin_ids}")
 
-    admin_filter = AdminFilter(config.bot.admin_id)
+    admin_filter = AdminFilter(config.bot.admin_ids)
     admin_router.message.filter(admin_filter)
     admin_command_router.message.filter(admin_filter)
 
-    for router in [admin_command_router, user_command_router, admin_router, user_router, my_chat_member_router,
-                   wildcard_router, error_router]:
+    for router in [
+        admin_command_router,
+        user_command_router,
+        admin_router,
+        user_router,
+        my_chat_member_router,
+        wildcard_router,
+        error_router,
+    ]:
         router.message.filter(PrivateChatTypeFilter())
         dp.include_router(router)
     logger.info("Handlers configured successfully")

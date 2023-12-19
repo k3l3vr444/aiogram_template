@@ -1,6 +1,6 @@
 bot:
   token: XXXX
-  admin_id:
+  admin_ids:
     - 1
   use_redis: True
   error_handler_id:

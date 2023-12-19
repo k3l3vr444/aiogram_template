@@ -13,15 +13,13 @@ admin_command_router = Router()
 
 
 @admin_command_router.message(Command("admin"))
-@admin_command_router.callback_query(AdminSpam(), F.data == 'cancel')
-async def menu(message_or_callback: Message | CallbackQuery, state: FSMContext):
+@admin_command_router.callback_query(AdminSpam(), F.data == "cancel")
+async def menu(event: Message | CallbackQuery, state: FSMContext):
     await state.clear()
-    if isinstance(message_or_callback, CallbackQuery):
-        message = message_or_callback.message
-    elif isinstance(message_or_callback, Message):
-        message = message_or_callback
+    if isinstance(event, CallbackQuery):
+        message = event.message
+    elif isinstance(event, Message):
+        message = event
     else:
         raise ValueError
-    await message.answer("Hello, admin!",
-                         reply_markup=admin_inline.menu
-                         )
+    await message.answer("Hello, admin!", reply_markup=admin_inline.menu)

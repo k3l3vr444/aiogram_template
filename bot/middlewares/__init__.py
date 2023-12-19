@@ -1,7 +1,7 @@
 from aiogram import Dispatcher
 from sqlalchemy.ext.asyncio import async_sessionmaker, AsyncSession
 
-from bot.models.config.config import Config
+from bot.models.config import Config
 from .config import ConfigMiddleware
 from .load_data import LoadDataMiddleware
 from .logging import LoggingMiddleware
@@ -9,7 +9,9 @@ from .db import DBMiddleware
 from .throttling import ThrottlingMiddleware
 
 
-def setup_middlewares(dp: Dispatcher, pool: async_sessionmaker[AsyncSession], config_: Config):
+def setup_middlewares(
+    dp: Dispatcher, pool: async_sessionmaker[AsyncSession], config_: Config
+):
     for tmp in [dp.message, dp.callback_query, dp.my_chat_member]:
         tmp.middleware(LoggingMiddleware())
 
